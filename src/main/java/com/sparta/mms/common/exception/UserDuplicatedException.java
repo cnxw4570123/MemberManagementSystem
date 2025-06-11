@@ -1,10 +1,14 @@
 package com.sparta.mms.common.exception;
 
-import com.sparta.mms.common.ErrorCode;
+import static com.sparta.mms.common.ErrorCode.USER_ALREADY_EXISTS;
 
 public class UserDuplicatedException extends AbstractBusinessException {
 
     public UserDuplicatedException() {
-        super(ErrorCode.USER_ALREADY_EXISTS.getCode(), ErrorCode.USER_ALREADY_EXISTS.getMessage());
+        super(
+            USER_ALREADY_EXISTS.getHttpStatus(),
+            USER_ALREADY_EXISTS.getCode(),
+            USER_ALREADY_EXISTS.getMessage()
+        );
     }
 }
