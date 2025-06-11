@@ -11,6 +11,7 @@ public enum ErrorCode {
     ACCESS_DENIED("ACCESS_DENIED", "관리자 권한이 필요한 요청입니다. 접근 권한이 없습니다."),
     ;
 
+    // TODO : HTTP 상태 코드 추가
     private final String code;
     private final String message;
 
