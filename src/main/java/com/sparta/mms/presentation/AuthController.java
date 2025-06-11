@@ -1,4 +1,4 @@
-package com.sparta.mms.auth.presentation;
+package com.sparta.mms.presentation;
 
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
