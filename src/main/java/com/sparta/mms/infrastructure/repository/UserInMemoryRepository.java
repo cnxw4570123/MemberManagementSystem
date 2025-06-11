@@ -2,6 +2,7 @@ package com.sparta.mms.infrastructure.repository;
 
 import com.sparta.mms.common.Role;
 import com.sparta.mms.domain.entity.User;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,7 +22,7 @@ public class UserInMemoryRepository {
         return saved;
     }
 
-    public User findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         User found = User.withoutId()
             .username("JIN HO")
             .nickname("Mentos")
@@ -30,6 +31,6 @@ public class UserInMemoryRepository {
             .build();
 
         found.assignUserId(1L);
-        return found;
+        return Optional.of(found);
     }
 }

@@ -2,12 +2,14 @@ package com.sparta.mms.infrastructure.repository;
 
 import com.sparta.mms.domain.entity.User;
 import com.sparta.mms.domain.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
+
     private final UserInMemoryRepository userInMemoryRepository;
 
     @Override
@@ -16,7 +18,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userInMemoryRepository.findByUsername(username);
     }
 }
