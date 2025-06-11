@@ -1,8 +1,7 @@
-package com.sparta.mms.common;
+package com.sparta.mms.common.exception;
 
 import com.sparta.mms.common.dto.response.Error;
 import com.sparta.mms.common.dto.response.Response;
-import com.sparta.mms.common.exception.AbstractBusinessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

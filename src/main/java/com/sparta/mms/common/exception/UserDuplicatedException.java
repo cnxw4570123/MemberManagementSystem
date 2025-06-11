@@ -1,6 +1,6 @@
 package com.sparta.mms.common.exception;
 
-import static com.sparta.mms.common.ErrorCode.USER_ALREADY_EXISTS;
+import static com.sparta.mms.common.exception.ErrorCode.USER_ALREADY_EXISTS;
 
 public class UserDuplicatedException extends AbstractBusinessException {
 

@@ -1,4 +1,4 @@
-package com.sparta.mms.common;
+package com.sparta.mms.common.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,16 @@ public enum ErrorCode {
         HttpStatus.UNAUTHORIZED,
         "ACCESS_DENIED",
         "관리자 권한이 필요한 요청입니다. 접근 권한이 없습니다."
+    ),
+    INVALID_TOKEN(
+        HttpStatus.UNAUTHORIZED,
+        "INVALID_TOKEN",
+        "잘못된 토큰입니다. 다시 로그인해주세요."
+    ),
+    INVALID_ROLE(
+        HttpStatus.UNAUTHORIZED,
+        "ROLE_NOT_FOUND",
+        "잘못된 역할입니다."
     ),
     ;
 
