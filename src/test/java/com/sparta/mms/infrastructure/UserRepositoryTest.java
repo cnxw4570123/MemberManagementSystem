@@ -3,7 +3,7 @@ package com.sparta.mms.infrastructure;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.sparta.mms.common.ErrorCode;
+import com.sparta.mms.common.exception.ErrorCode;
 import com.sparta.mms.common.Role;
 import com.sparta.mms.common.exception.InvalidCredentialsException;
 import com.sparta.mms.common.exception.UserDuplicatedException;
@@ -11,7 +11,6 @@ import com.sparta.mms.domain.entity.User;
 import com.sparta.mms.domain.repository.UserRepository;
 import com.sparta.mms.infrastructure.repository.UserInMemoryRepository;
 import com.sparta.mms.infrastructure.repository.UserRepositoryImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Import(UserRepositoryImpl.class)
 public class UserRepositoryTest {
 
-    // TODO:
+    // TODO: PasswordEncoder 추가 후 matches 확인
 
     @Autowired
     UserRepository userRepository;
@@ -45,7 +44,7 @@ public class UserRepositoryTest {
 
         // then
         assertEquals(user.getUsername(), saved.getUsername());
-        assertEquals(1L, saved.getUserId());
+        assertEquals(2L, saved.getUserId());
         assertEquals(user.getNickname(), saved.getNickname());
         assertEquals(Role.USER, saved.getUserRole());
     }
@@ -111,7 +110,7 @@ public class UserRepositoryTest {
         // when
         assertThatThrownBy(() -> {
             userRepository.findByUsername(username)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(InvalidCredentialsException::new);
         })
             .isInstanceOf(InvalidCredentialsException.class)
             .hasMessageContaining(ErrorCode.INVALID_CREDENTIALS.getMessage());
