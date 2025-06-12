@@ -24,9 +24,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TokenProvider {
 
-    @Value("${jwt.access.exp}")
     private int accessTokenExp;
-
     private String ISSUER = "Baro-Intern";
     private final String AUTHORIZATION_KEY = "auth";
     private final Long TO_MILLIS = 1_000L;
@@ -38,7 +36,7 @@ public class TokenProvider {
         @Value("${jwt.access.exp}") int accessTokenExp
     ) {
         this.accessTokenExp = accessTokenExp;
-        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(salt));
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(salt));
     }
 
     // generation - 생성
@@ -103,7 +101,7 @@ public class TokenProvider {
         }
     }
 
-    // userUUID 추출
+    // userId 추출
     public long getUserId(String accessToken) {
         return Long.parseLong(parseClaims(accessToken).getSubject());
     }

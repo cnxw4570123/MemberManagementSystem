@@ -38,6 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final String BEARER_PREFIX = "Bearer ";
     private final TokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -60,34 +61,32 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         token = token.substring(BEARER_PREFIX.length());
         TokenStatus tokenStatus = tokenProvider.validateAccessToken(token);
 
-        // 토큰이 정상적이지 않을 경우
-        if (tokenStatus == TokenStatus.IS_NOT_VALID) {
-            throw new InvalidTokenException();
-        }
-
-        // 토큰이 만료 -> 재발급 필요
-        if (tokenStatus == TokenStatus.IS_EXPIRED) {
-            // TODO : 재발급용 예외코드 추가
-            throw new InvalidTokenException();
-        }
-
-        // 2. JWT에서 아이디 추출 & 권한 추출
-        long userId = tokenProvider.getUserId(token);
-        Role userRole = tokenProvider.getUserRole(token);
-        LocalDateTime issuedAt = tokenProvider.getIssuedAt(token);
-
         try {
+            // 토큰이 정상적이지 않을 경우
+            if (tokenStatus == TokenStatus.IS_NOT_VALID) {
+                throw new InvalidTokenException();
+            }
+
+            // 토큰이 만료 -> 재발급 필요
+            if (tokenStatus == TokenStatus.IS_EXPIRED) {
+                // TODO : 재발급용 예외코드 추가
+                throw new InvalidTokenException();
+            }
+
+            // 2. JWT에서 아이디 추출 & 권한 추출
+            long userId = tokenProvider.getUserId(token);
+            Role userRole = tokenProvider.getUserRole(token);
+            LocalDateTime issuedAt = tokenProvider.getIssuedAt(token);
             UserUtils.checkAccessTokenBlocked(userId, issuedAt);
+
+            setAuthentication(userId, userRole);
+            filterChain.doFilter(request, response);
         } catch (AbstractBusinessException e) {
             setContentTypeAndEncoding(response);
             Error error = Error.of(e.getHttpStatus(), e.getCode(), e.getMessage());
             response.setStatus(error.status().value());
-            response.getWriter().write(new ObjectMapper().writeValueAsString(error));
-            return;
+            response.getWriter().write(objectMapper.writeValueAsString(error));
         }
-
-        setAuthentication(userId, userRole);
-        filterChain.doFilter(request, response);
     }
 
     // 4. SecurityContext에 Authentication 객체 저장
@@ -97,20 +96,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
-    }
-
-    /**
-     * UserId로 DB에서 조회한 후 인증 주체를 만드는 메서드
-     * @param userId
-     * @return
-     */
-    private UsernamePasswordAuthenticationToken createAuthentication(long userId) {
-        UserDetails userDetails = userDetailsService.loadUserByUserId(userId);
-        return new UsernamePasswordAuthenticationToken(
-            userDetails,
-            null,
-            userDetails.getAuthorities()
-        );
     }
 
     /**
