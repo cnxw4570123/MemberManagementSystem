@@ -42,7 +42,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().matches("^/api/v1/auth/");
+        return request.getRequestURI().matches("^/api/v1/auth/|^/swagger-ui/");
     }
 
     @Override

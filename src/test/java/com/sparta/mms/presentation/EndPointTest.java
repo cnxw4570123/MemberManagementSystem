@@ -239,7 +239,6 @@ public class EndPointTest {
             .build();
 
         userService.save(request.toCommand());
-        System.out.println("token = " + adminToken);
     }
 
     private void generateAdminToken() throws Exception {
