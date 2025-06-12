@@ -18,7 +18,7 @@ public enum ErrorCode {
         "이미 존재하는 아이디입니다."
     ),
     ACCESS_DENIED(
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.FORBIDDEN,
         "ACCESS_DENIED",
         "관리자 권한이 필요한 요청입니다. 접근 권한이 없습니다."
     ),
@@ -31,6 +31,16 @@ public enum ErrorCode {
         HttpStatus.UNAUTHORIZED,
         "ROLE_NOT_FOUND",
         "잘못된 역할입니다."
+    ),
+    LOGIN_REQUIRED(
+        HttpStatus.UNAUTHORIZED,
+        "LOGIN_REQUIRED",
+        "로그인 필요입니다."
+    ),
+    TEMPORARY_SERVER_ISSUE(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        "TEMPORARY_SERVER_ISSUE",
+        "요청을 처리하는데 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
     ),
     ;
 
