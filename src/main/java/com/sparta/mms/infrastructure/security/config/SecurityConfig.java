@@ -27,7 +27,8 @@ public class SecurityConfig {
     private final AuthenticationConfiguration configuration;
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+        throws Exception {
         return configuration.getAuthenticationManager();
     }
 
@@ -38,7 +39,8 @@ public class SecurityConfig {
 
     @Bean
     JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(tokenProvider);
+        JwtAuthenticationFilter jwtAuthenticationFilter =
+            new JwtAuthenticationFilter(tokenProvider);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager(configuration));
         return jwtAuthenticationFilter;
     }
@@ -56,9 +58,14 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(auth ->
-            auth.requestMatchers("/auth/**").permitAll()
+            auth.requestMatchers("/auth/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
+        );
+
+        http.exceptionHandling(ex ->
+            ex.accessDeniedHandler(new JwtAccessDeniedHandler())
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
 
         return http.build();
