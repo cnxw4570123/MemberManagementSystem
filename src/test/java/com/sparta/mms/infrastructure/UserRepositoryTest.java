@@ -1,7 +1,6 @@
 package com.sparta.mms.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,8 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Import(UserRepositoryImpl.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserRepositoryTest {
-
-    // TODO: PasswordEncoder 추가 후 matches 확인
 
     @Autowired
     UserRepository userRepository;
@@ -94,26 +91,60 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void 찾기_성공_테스트() {
+    void 아이디로_찾기_성공_테스트() {
         // given
         String username = "JIN HO";
 
-        // when + then
-        assertDoesNotThrow(() -> {
-            userRepository.findByUsername(username)
-                .orElseThrow(InvalidCredentialsException::new);
-        });
+        // when
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(InvalidCredentialsException::new);
 
+        // then
+        assertEquals(2L, user.getUserId());
+        assertEquals(username, user.getUsername());
+        assertEquals("Mentos", user.getNickname());
+        assertTrue(passwordEncoder.matches("1234", user.getPassword()));
+        assertEquals(Role.USER, user.getUserRole());
     }
 
     @Test
-    void 찾기_실패_테스트() {
+    void 아이디로_찾기_실패_테스트() {
         //given
         String username = "NONE";
 
         // when + then
         assertThatThrownBy(() -> {
             userRepository.findByUsername(username)
+                .orElseThrow(InvalidCredentialsException::new);
+        })
+            .isInstanceOf(InvalidCredentialsException.class)
+            .hasMessageContaining(ErrorCode.INVALID_CREDENTIALS.getMessage());
+    }
+
+    @Test
+    void PK로_찾기_성공_테스트() {
+        //given
+        long userId = 2L;
+
+        // when
+        User user = userRepository.finById(userId)
+            .orElseThrow(InvalidCredentialsException::new);
+
+        assertEquals(userId, user.getUserId());
+        assertEquals("JIN HO", user.getUsername());
+        assertEquals("Mentos", user.getNickname());
+        assertTrue(passwordEncoder.matches("1234", user.getPassword()));
+        assertEquals(Role.USER, user.getUserRole());
+    }
+
+    @Test
+    void PK로_찾기_실패_테스트() {
+        //given
+        long userId = 999L;
+
+        // when + then
+        assertThatThrownBy(() -> {
+            userRepository.finById(userId)
                 .orElseThrow(InvalidCredentialsException::new);
         })
             .isInstanceOf(InvalidCredentialsException.class)
