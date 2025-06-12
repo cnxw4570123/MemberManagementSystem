@@ -1,7 +1,7 @@
 # 🛡️ 회원 관리 시스템
 
 간단한 JWT 기반 회원 관리 시스템입니다.  
-회원가입, 로그인, 관리자 권한 부여, API 문서화(Swagger), AWS EC2 배포
+회원가입, 로그인, 관리자 권한 부여, API 문서화(Swagger), AWS EC2 배포 <br>
 (JPA, RDB, 파일 사용 없이 **순수 메모리 관리**)
 
 ---
@@ -13,7 +13,7 @@
 - **API 문서화(Swagger/OpenAPI) 지원**
 - **테스트 코드(JUnit, WebMvcTest) 작성**
 - **EC2에 배포 및 외부 접속 가능**
-
+- Nginx 리버스 프록시 **미적용**
 ---
 
 ## 🚦 주요 기능
@@ -131,3 +131,20 @@ cd MemberManagementSystem
 # 2. 실행
 java -jar build/libs/MMS-0.0.1-SNAPSHOT.jar
 ```
+
+---
+## 📝 기타 사항
+
+- 각 기능의 **원자성 보장**을 위해 `synchronized` 메서드로 구성
+  - `ConcurrentHashMap`, `AtomicLong` 등으로 동시성 문제 예방
+- 권한 변경 이후 기존 토큰 블랙리스트 등록
+- 응답 인터페이스 구성 및 구현체 등록으로 **응답의 일관성 보장**
+- 리소스 보호를 위해 `JwtAuthenticationFilter`, `AuthenticationEntryPoint`, `AccessDeniedHandler` 구현체 추가
+
+---
+
+## 🔗 제출 정보
+
+- Github : https://github.com/cnxw4570123/MemberManagementSystem
+- Swagger-UI : http://54.180.32.38:8080/swagger-ui/index.html
+- EC2 Address : http://54.180.32.38:8080
