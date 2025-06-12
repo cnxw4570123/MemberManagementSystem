@@ -9,6 +9,7 @@ public record UpdateUserQuery(
     String username,
     String nickname,
     Role role
+    // TODO : roles 필드 추가
 ) {
 
     public static UpdateUserQuery from(User user) {

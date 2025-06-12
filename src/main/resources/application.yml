@@ -7,6 +7,6 @@ jwt:
   access:
     exp: ${JWT_ACCESS_EXPIRATION:86400}
 
-#logging:
-#  level:
-#    org.springframework.security: DEBUG
+logging:
+  level:
+    org.springframework.security: DEBUG

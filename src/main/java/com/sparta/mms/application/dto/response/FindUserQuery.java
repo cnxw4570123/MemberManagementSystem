@@ -10,6 +10,7 @@ public record FindUserQuery(
     String username,
     String nickname,
     Role role
+    // TODO : roles 필드 추가
 ) {
 
     public static FindUserQuery from(User user) {
