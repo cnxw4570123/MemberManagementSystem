@@ -1,5 +1,6 @@
 package com.sparta.mms.infrastructure.repository;
 
+import com.sparta.mms.common.exception.UserDuplicatedException;
 import com.sparta.mms.domain.entity.User;
 import com.sparta.mms.domain.repository.UserRepository;
 import java.util.Optional;

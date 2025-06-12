@@ -1,6 +1,7 @@
 package com.sparta.mms.infrastructure.repository;
 
 import com.sparta.mms.common.Role;
+import com.sparta.mms.common.exception.UserDuplicatedException;
 import com.sparta.mms.domain.entity.User;
 import jakarta.annotation.PostConstruct;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,42 +30,34 @@ public class UserInMemoryRepository {
         users.put(user.getUserId(), user);
     }
 
-    // TODO : Trie로 아이디 검색 구현
+    public synchronized User save(User user) {
+        findByUsername(user.getUsername())
+            .ifPresent(u -> {
+                throw new UserDuplicatedException();
+            });
 
-    public User save(User user) {
-        User saved = User.withoutId()
-            .username(user.getUsername())
-            .nickname(user.getNickname())
-            .password(user.getPassword())
-            .userRole(user.getUserRole())
-            .build();
+        long userId = userSequence.addAndGet(1L);
 
-        saved.assignUserId(2L);
+        user.assignUserId(userId);
+        users.put(userId, user);
 
-        return saved;
+        return users.get(userId);
     }
 
-    public Optional<User> findByUsername(String username) {
-        // TODO : 지금은 values 돌아다니면서 찾기
-        User found = User.withoutId()
-            .username("JIN HO")
-            .nickname("Mentos")
-            .password("{bcrypt}$2a$12$7UFZAxCrpxqXyZq.KuvFNunDzYD3.9CJcqQLZPI/pe/qCXpJQDieS")
-            .userRole(Role.USER)
-            .build();
+    public synchronized Optional<User> findByUsername(String username) {
+        // TODO : Trie로 아이디 검색 구현
 
-        found.assignUserId(2L);
-        return Optional.of(found);
+        for (User user : users.values()) {
+            if (user.getUsername().equals(username)) {
+                return Optional.of(user);
+            }
+        }
+
+        return Optional.empty();
+
     }
 
-    public Optional<User> findById(long userId) {
-        User found = User.withoutId()
-            .username("JIN HO")
-            .nickname("Mentos")
-            .password("{bcrypt}$2a$12$7UFZAxCrpxqXyZq.KuvFNunDzYD3.9CJcqQLZPI/pe/qCXpJQDieS")
-            .userRole(Role.USER).build();
-
-        found.assignUserId(2L);
-        return Optional.of(found);
+    public synchronized Optional<User> findById(long userId) {
+        return Optional.ofNullable(users.getOrDefault(userId, null));
     }
 }
