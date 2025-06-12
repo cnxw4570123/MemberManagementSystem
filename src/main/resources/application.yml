@@ -1,1 +1,12 @@
-spring.application.name=MMS
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+jwt:
+  secret: ${JWT_SECRET:VGhpcyB0ZXh0IGlzIGZvciB0ZXN0IGVudmlyb25tZW50LiBEbyBub3QgdXNlIGl0IGluIGEgcHJvZHVjdGlvbiBlbnZpcm9ubWVudC4NCuyatOyYge2ZmOqyveyXkOyEnOuKlCDsgqzsmqntlZjsp4Ag66eQ6rOgIOuLpOuluCDthY3siqTtirjrpbwg7IKs7Jqp7ZW07KO87IS47JqU}
+  access:
+    exp: ${JWT_ACCESS_EXPIRATION:86400}
+
+logging:
+  level:
+    org.springframework.security: DEBUG

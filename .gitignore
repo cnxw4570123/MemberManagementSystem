@@ -37,5 +37,4 @@ out/
 .vscode/
 
 ### secret ###
-!**/src/main/**/resources/*.yml
-!**/src/main/**/resources/*.yaml
+.env

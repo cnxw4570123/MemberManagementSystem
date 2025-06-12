@@ -21,4 +21,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByUsername(String username) {
         return userInMemoryRepository.findByUsername(username);
     }
+
+    @Override
+    public Optional<User> finById(long userId) {
+        return userInMemoryRepository.findById(userId);
+    }
 }

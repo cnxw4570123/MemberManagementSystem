@@ -1,11 +1,15 @@
 package com.sparta.mms.common.exception;
 
-import com.sparta.mms.common.ErrorCode;
+import static com.sparta.mms.common.exception.ErrorCode.ACCESS_DENIED;
 
 public class AdminRoleRequiredException extends AbstractBusinessException {
 
     public AdminRoleRequiredException() {
-        super(ErrorCode.ACCESS_DENIED.getCode(), ErrorCode.ACCESS_DENIED.getMessage());
+        super(
+            ACCESS_DENIED.getHttpStatus(),
+            ACCESS_DENIED.getCode(),
+            ACCESS_DENIED.getMessage()
+        );
     }
 
 }
