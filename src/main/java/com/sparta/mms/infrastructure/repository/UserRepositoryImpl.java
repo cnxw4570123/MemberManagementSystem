@@ -27,4 +27,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> finById(long userId) {
         return userInMemoryRepository.findById(userId);
     }
+
+    @Override
+    public User update(User user) {
+        return userInMemoryRepository.update(user);
+    }
 }

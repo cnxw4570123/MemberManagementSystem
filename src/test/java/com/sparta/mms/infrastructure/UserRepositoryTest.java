@@ -8,6 +8,7 @@ import com.sparta.mms.common.Role;
 import com.sparta.mms.common.exception.ErrorCode;
 import com.sparta.mms.common.exception.InvalidCredentialsException;
 import com.sparta.mms.common.exception.UserDuplicatedException;
+import com.sparta.mms.common.exception.UserNotFoundException;
 import com.sparta.mms.domain.entity.User;
 import com.sparta.mms.domain.repository.UserRepository;
 import com.sparta.mms.infrastructure.repository.UserInMemoryRepository;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -115,10 +117,10 @@ public class UserRepositoryTest {
         // when + then
         assertThatThrownBy(() -> {
             userRepository.findByUsername(username)
-                .orElseThrow(InvalidCredentialsException::new);
+                .orElseThrow(UserNotFoundException::new);
         })
-            .isInstanceOf(InvalidCredentialsException.class)
-            .hasMessageContaining(ErrorCode.INVALID_CREDENTIALS.getMessage());
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessageContaining(ErrorCode.USER_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -145,9 +147,36 @@ public class UserRepositoryTest {
         // when + then
         assertThatThrownBy(() -> {
             userRepository.finById(userId)
-                .orElseThrow(InvalidCredentialsException::new);
+                .orElseThrow(UserNotFoundException::new);
         })
-            .isInstanceOf(InvalidCredentialsException.class)
-            .hasMessageContaining(ErrorCode.INVALID_CREDENTIALS.getMessage());
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessageContaining(ErrorCode.USER_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    void 권한_업그레이드_테스트() {
+        //given
+        User user = User.withoutId()
+            .username("before")
+            .userRole(Role.USER)
+            .password(passwordEncoder.encode("1234"))
+            .nickname("before")
+            .build();
+
+        userRepository.save(user);
+        Long userId = user.getUserId();
+
+        // when
+
+        user = userRepository.finById(userId)
+            .orElseThrow(UserNotFoundException::new);
+        user.grantAdminRole();
+        User update = userRepository.update(user);
+
+        // then
+        assertEquals(Role.ADMIN, user.getUserRole());
+        assertEquals("before", user.getUsername());
+        assertEquals("before", user.getNickname());
+        assertTrue(passwordEncoder.matches("1234", user.getPassword()));
     }
 }

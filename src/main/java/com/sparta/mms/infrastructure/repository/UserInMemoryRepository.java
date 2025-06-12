@@ -60,4 +60,11 @@ public class UserInMemoryRepository {
     public synchronized Optional<User> findById(long userId) {
         return Optional.ofNullable(users.getOrDefault(userId, null));
     }
+
+    public synchronized User update(User user) {
+        // TODO : Trie 검색 후 객체 갱신 필요
+        users.put(user.getUserId(), user);
+
+        return users.get(user.getUserId());
+    }
 }

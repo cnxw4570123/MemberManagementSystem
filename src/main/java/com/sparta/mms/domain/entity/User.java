@@ -29,4 +29,7 @@ public class User {
         this.userRole = userRole;
     }
 
+    public void grantAdminRole() {
+        this.userRole = Role.ADMIN;
+    }
 }
