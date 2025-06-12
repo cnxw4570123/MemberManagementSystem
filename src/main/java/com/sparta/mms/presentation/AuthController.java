@@ -1,9 +1,15 @@
 package com.sparta.mms.presentation;
 
-import java.util.Map;
+import com.sparta.mms.application.UserService;
+import com.sparta.mms.common.dto.response.Response;
+import com.sparta.mms.common.dto.response.Success;
+import com.sparta.mms.presentation.dto.request.SignUpUserRequest;
+import com.sparta.mms.presentation.dto.response.SignUpUserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,23 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+    private final UserService userService;
+
     @PostMapping("/sign-up")
-    public ResponseEntity<Map<String, Object>> signUp() {
-        Map<String, Object> data = Map.of(
-            "username", "JIN HO",
-            "nickname", "Mentos",
-            "roles", Map.of("role", "USER")
-        );
+    public ResponseEntity<Response> signUp(@RequestBody SignUpUserRequest request) {
+        SignUpUserResponse data = SignUpUserResponse.from(userService.save(request.toCommand()));
+        Response response = Success.of(HttpStatus.CREATED, data);
 
-        return ResponseEntity.ok(data);
-    }
-
-
-    @PostMapping("/sign-in")
-    public ResponseEntity<Map<String, String>> signIn() {
-
-        Map<String, String> data = Map.of("token", "temp-token");
-
-        return ResponseEntity.ok(data);
+        return response.toResponseEntity();
     }
 }
